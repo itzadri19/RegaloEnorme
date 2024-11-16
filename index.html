@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrucciones Para Obtener Tu Regalo</title>
+    <style>
+        /* Variables de tamaño y colores */
+        :root {
+            --calendar-width: 90%; /* Ajusta el ancho del calendario */
+            --calendar-height: 550px; /* Ajusta la altura del calendario */
+            --cell-size: 80px; /* Ajusta el tamaño de las celdas del calendario */
+            --main-color: #f8c3d6; /* Rosita claro */
+            --secondary-color: #add8e6; /* Azul claro */
+            --text-color: #333333;
+            --header-bg: #c0e0f8; /* Azul más suave */
+            --button-bg: #f8c3d6; /* Botones rositas */
+            --button-hover-bg: #e8a9c2; /* Botón rosita más intenso */
+        }
+
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--main-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+        }
+
+        /* Header principal */
+        header {
+            width: 100%;
+            background-color: var(--header-bg);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            flex-grow: 1; /* Centra el título */
+            text-align: center;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            margin-right: 20px; /* Espacio adicional al margen derecho */
+        }
+
+        header button {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 10px; /* Bordes curvos */
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.2s;
+            font-size: 0.9em;
+        }
+
+        header button:hover {
+            background-color: var(--button-hover-bg);
+            transform: scale(1.05);
+        }
+
+        #revision-btn {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+        }
+
+        #revision-btn:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Calendario interactivo */
+        #calendar {
+            width: var(--calendar-width);
+            height: var(--calendar-height);
+            margin: 20px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calendar-header button {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .calendar-header button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .day {
+            height: var(--cell-size);
+            width: var(--cell-size);
+            padding: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            background-color: white;
+        }
+
+        .reserved {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .reserved:hover {
+            background-color: #96c8e9;
+        }
+
+        /* Popup de reservas */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            visibility: hidden;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-content button {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .popup-content button:hover {
+            background-color: var(--button-hover-bg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Popup inicial -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p>¿Eres Ana Gallo Pascual?</p>
+            <button onclick="verifyUser()">Sí</button>
+        </div>
+    </div>
+
+    <!-- Popup para las reservas -->
+    <div class="popup" id="reservation-popup">
+        <div class="popup-content">
+            <p id="reservation-title"></p>
+            <button onclick="closeReservationPopup()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Header principal -->
+    <header>
+        <h1>Instrucciones Para Obtener Tu Regalo</h1>
+        <div class="header-buttons">
+            <button id="revision-btn" onclick="showRevisionPopup()">Revisión</button>
+            <a href="instrucciones.html">
+                <button>Instrucciones</button>
+            </a>
+        </div>
+    </header>
+
+    <!-- Calendario interactivo -->
+    <div id="calendar"></div>
+
+    <script>
+        // Validación de usuario
+        function verifyUser() {
+            const password = prompt("Introduce la contraseña:");
+            if (password === "300123") {
+                document.getElementById('popup').style.display = 'none';
+            } else {
+                alert("Contraseña incorrecta");
+            }
+        }
+
+        // Popup de reservas
+        const reservationPopup = document.getElementById('reservation-popup');
+        const reservationTitle = document.getElementById('reservation-title');
+
+        function showReservationPopup(title) {
+            reservationTitle.textContent = title;
+            reservationPopup.style.visibility = 'visible';
+        }
+
+        function closeReservationPopup() {
+            reservationPopup.style.visibility = 'hidden';
+        }
+
+        // Fechas reservadas
+        const reservedDates = {
+            "2024-11-25": "Sorpresa especial",
+            "2024-12-10": "Gran evento"
+        };
+
+        // Calendario interactivo
+        const calendarDiv = document.getElementById('calendar');
+        let currentMonth = new Date();
+
+        function renderCalendar(date) {
+            calendarDiv.innerHTML = "";
+            const monthTitle = document.createElement('div');
+            monthTitle.className = 'calendar-header';
+            monthTitle.innerHTML = `
+                <button onclick="changeMonth(-1)">⬅</button>
+                <h2>${date.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h2>
+                <button onclick="changeMonth(1)">➡</button>
+            `;
+            calendarDiv.appendChild(monthTitle);
+
+            // Generar cuadrícula
+            const grid = document.createElement('div');
+            grid.className = 'calendar-grid';
+
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            // Espacios vacíos antes del primer día
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            // Días del mes actual
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const day = document.createElement('div');
+                const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                day.className = 'day';
+                if (reservedDates[formattedDate]) {
+                    day.classList.add('reserved');
+                    day.onclick = function () {
+                        showReservationPopup(reservedDates[formattedDate]);
+                    };
+                }
+                day.textContent = i;
+                grid.appendChild(day);
+            }
+
+            calendarDiv.appendChild(grid);
+        }
+
+        // Cambiar mes
+        function changeMonth(diff) {
+            currentMonth.setMonth(currentMonth.getMonth() + diff);
+            renderCalendar(currentMonth);
+        }
+
+        // Renderizar calendario inicial
+        renderCalendar(currentMonth);
+
+        // Popup de revisión
+        function showRevisionPopup() {
+            const needsRevision = false; // Cambiar a `false` para simular que no hay nada que revisar
+            const message = needsRevision
+                ? "Revise su buzón de casa o su correo electrónico."
+                : "No tienes nada que revisar.";
+            alert(message);
+        }
+    </script>
+</body>
+</html>
