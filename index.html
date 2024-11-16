@@ -274,55 +274,68 @@
             "2025-04-28": "Aranda",
         };
 
-             // Configuración del calendario
-        function createCalendar() {
-            const calendarElement = document.getElementById('calendar');
-            const currentDate = new Date();
-            const month = currentDate.getMonth();
-            const year = currentDate.getFullYear();
+        // Calendario interactivo
+        const calendarDiv = document.getElementById('calendar');
+        let currentMonth = new Date();
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
+        function renderCalendar(date) {
+            calendarDiv.innerHTML = "";
+            const monthTitle = document.createElement('div');
+            monthTitle.className = 'calendar-header';
+            monthTitle.innerHTML = 
+                <button onclick="changeMonth(-1)">⬅</button>
+                <h2>${date.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h2>
+                <button onclick="changeMonth(1)">➡</button>
+            ;
+            calendarDiv.appendChild(monthTitle);
 
-            const daysOfWeek = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-            let calendarHTML = `
-                <div class="calendar-header">
-                    <button onclick="changeMonth(-1)">&#8249;</button>
-                    <div>${daysOfWeek.join(' ')}</div>
-                    <button onclick="changeMonth(1)">&#8250;</button>
-                </div>
-                <div class="calendar-grid">
-            `;
+            // Generar cuadrícula
+            const grid = document.createElement('div');
+            grid.className = 'calendar-grid';
 
-            // Añadir los días
-            let day = 1;
-            for (let i = 0; i < 6; i++) {  // 6 filas posibles en el calendario
-                for (let j = 0; j < 7; j++) {  // 7 días por fila
-                    const currentDay = new Date(year, month, day);
-                    const dateString = currentDay.toISOString().split('T')[0];
-                    if (i === 0 && j < firstDay) {
-                        calendarHTML += `<div class="day"></div>`;
-                    } else if (day <= totalDays) {
-                        const reservedTitle = reservedDates[dateString];
-                        const isReserved = reservedTitle ? 'reserved' : '';
-                        calendarHTML += `<div class="day ${isReserved}" onclick="reservedTitle ? showReservationPopup(reservedTitle) : ''">${day}</div>`;
-                        day++;
-                    } else {
-                        break;
-                    }
-                }
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            // Espacios vacíos antes del primer día
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                grid.appendChild(document.createElement('div'));
             }
-            calendarHTML += "</div>";
-            calendarElement.innerHTML = calendarHTML;
+
+            // Días del mes actual
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const day = document.createElement('div');
+                const formattedDate = ${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')};
+                day.className = 'day';
+                if (reservedDates[formattedDate]) {
+                    day.classList.add('reserved');
+                    day.onclick = function () {
+                        showReservationPopup(reservedDates[formattedDate]);
+                    };
+                }
+                day.textContent = i;
+                grid.appendChild(day);
+            }
+
+            calendarDiv.appendChild(grid);
         }
 
-        function changeMonth(direction) {
-            const currentDate = new Date();
-            currentDate.setMonth(currentDate.getMonth() + direction);
-            createCalendar();
+        // Cambiar mes
+        function changeMonth(diff) {
+            currentMonth.setMonth(currentMonth.getMonth() + diff);
+            renderCalendar(currentMonth);
         }
 
-        createCalendar();
+        // Renderizar calendario inicial
+        renderCalendar(currentMonth);
+
+        // Popup de revisión
+        function showRevisionPopup() {
+            const needsRevision = false; // Cambiar a false para simular que no hay nada que revisar
+            const message = needsRevision
+                ? "Revise su buzón de casa o su correo electrónico."
+                : "No tienes nada que revisar.";
+            alert(message);
+        }
     </script>
 </body>
 </html>
