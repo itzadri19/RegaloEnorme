@@ -282,11 +282,11 @@
             calendarDiv.innerHTML = "";
             const monthTitle = document.createElement('div');
             monthTitle.className = 'calendar-header';
-            monthTitle.innerHTML = 
+            monthTitle.innerHTML = `
                 <button onclick="changeMonth(-1)">⬅</button>
                 <h2>${date.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</h2>
                 <button onclick="changeMonth(1)">➡</button>
-            ;
+            `;
             calendarDiv.appendChild(monthTitle);
 
             // Generar cuadrícula
@@ -304,7 +304,7 @@
             // Días del mes actual
             for (let i = 1; i <= lastDay.getDate(); i++) {
                 const day = document.createElement('div');
-                const formattedDate = ${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')};
+                const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 day.className = 'day';
                 if (reservedDates[formattedDate]) {
                     day.classList.add('reserved');
@@ -330,7 +330,7 @@
 
         // Popup de revisión
         function showRevisionPopup() {
-            const needsRevision = false; // Cambiar a false para simular que no hay nada que revisar
+            const needsRevision = false; // Cambiar a `false` para simular que no hay nada que revisar
             const message = needsRevision
                 ? "Revise su buzón de casa o su correo electrónico."
                 : "No tienes nada que revisar.";
